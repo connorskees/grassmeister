@@ -5,7 +5,7 @@
     "serve": "webpack-dev-server",
     "build": "webpack --config webpack.prod.js",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@connorskees/grass": "^0.9.8"
