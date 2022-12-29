@@ -34,11 +34,12 @@ jobs:
           npm run build
           mv dist public
           
-          git checkout gh-pages
-          
           git init
           git config user.name "GitHub Actions"
           git config user.email "github-actions-bot@users.noreply.${GITHUB_HOSTNAME}"
+          
+          git checkout -b gh-pages
+          
           git add .
 
           git commit -m "deploy"
