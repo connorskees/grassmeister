@@ -36,7 +36,7 @@ jobs:
           npm install
           echo "building"
           npm run build
-          mv dist public
+          mv dist docs
           
           git init
           git config user.name "GitHub Actions"
