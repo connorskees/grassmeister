@@ -68,13 +68,13 @@
 			const input = monaco.editor.create(document.getElementById('editor'), {
 				value: [
 					'a {',
-					'	b {',
-					'		color: &;',
-					'	}',
+					'    b {',
+					'        color: &;',
+					'    }',
 					'}',
 				].join('\n'),
 				language: 'scss',
-				theme: 'vs-dark'
+				theme: 'vs-dark',
 			});
 			const output = monaco.editor.create(document.getElementById('output'), {
 				value: [
@@ -87,11 +87,11 @@
 				readOnly: true,
 			});
 
-			if (window.input) {
-				window.input.getModel().onDidChangeContent((event) => {
-					window.compile(input, output);
-				});
-			}
+			input.getModel().updateOptions({ insertSpaces: true });
+
+			input.getModel().onDidChangeContent((event) => {
+				window.compile(input, output);
+			});
 		});
 	</script>
 </body>
