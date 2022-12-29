@@ -87,9 +87,11 @@
 				readOnly: true,
 			});
 
-			window.input.getModel().onDidChangeContent((event) => {
-				window.compile(input, output);
-			})
+			if (window.input) {
+				window.input.getModel().onDidChangeContent((event) => {
+					window.compile(input, output);
+				});
+			}
 		});
 	</script>
 </body>
