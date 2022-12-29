@@ -5,16 +5,93 @@
 	<meta charset="utf-8">
 	<title>grass repl</title>
 	<style>
-		textarea {
-			height: 80vh;
-			font: normal 1rem monospace;
+		html,
+		body {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+
+		#editor,
+		#output {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+
+		.outer {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+		}
+
+		.container {
+			width: 50%;
+			height: 100vh;
 		}
 	</style>
 </head>
 
 <body>
-	<textarea cols="100" id="in" type="text"></textarea>
-	<textarea cols="100" id="out" type="text"></textarea>
+
+	<script src="https://unpkg.com/monaco-editor@latest/min/vs/loader.js"></script>
+
+	<div class="outer">
+		<div class="container">
+			<div id="editor"></div>
+		</div>
+		<div class="container">
+			<div id="output"></div>
+		</div>
+	</div>
+
+
+	<script>
+		require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' } });
+		window.MonacoEnvironment = { getWorkerUrl: () => proxy };
+
+		let proxy = URL.createObjectURL(new Blob([`
+			self.MonacoEnvironment = {
+				baseUrl: 'https://unpkg.com/monaco-editor@latest/min/'
+			};
+			importScripts('https://unpkg.com/monaco-editor@latest/min/vs/base/worker/workerMain.js');
+		`], { type: 'text/javascript' }));
+
+		require(["vs/editor/editor.main"], function () {
+			const input = monaco.editor.create(document.getElementById('editor'), {
+				value: [
+					'a {',
+					'	b {',
+					'		color: &;',
+					'	}',
+					'}',
+				].join('\n'),
+				language: 'scss',
+				theme: 'vs-dark'
+			});
+			const output = monaco.editor.create(document.getElementById('output'), {
+				value: [
+					'a b {',
+					'    color: a b;',
+					'}'
+				].join('\n'),
+				language: 'css',
+				theme: 'vs-dark',
+				readOnly: true,
+			});
+
+			window.input.getModel().onDidChangeContent((event) => {
+				window.compile(input, output);
+			})
+		});
+	</script>
 </body>
 
 </html>
