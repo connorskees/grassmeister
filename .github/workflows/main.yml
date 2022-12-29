@@ -17,7 +17,7 @@ jobs:
           OUT_DIR: "public"
           # Or if publishing to the same repo, use the automatic token
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPOSITORY: "https://github.com/connorskees/grassmeister"
+          REPOSITORY: "grassmeister"
           GITHUB_HOSTNAME: "github.com"
         run: |
           set -e
