@@ -48,6 +48,6 @@ jobs:
 
           git commit -m "deploy"
           
-          echo "Pushing to master:${remote_branch}"
+          echo "Pushing to ${remote_branch}"
           
-          git push --force "${remote_repo}" master:"${remote_branch}"
+          git push --force "${remote_repo}" "${remote_branch}"
