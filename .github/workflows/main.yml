@@ -15,7 +15,6 @@ jobs:
           PAGES_BRANCH: gh-pages
           BUILD_DIR: "."
           OUT_DIR: "public"
-          TARGET_REPOSITORY: $REPOSITORY
           # Or if publishing to the same repo, use the automatic token
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -24,7 +23,7 @@ jobs:
           echo "Starting deploy..."
           git config --global url."https://".insteadOf git://
           git config --global url."$GITHUB_SERVER_URL/".insteadOf "git@${GITHUB_HOSTNAME}":
-          remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@${GITHUB_HOSTNAME}/${TARGET_REPOSITORY}.git"
+          remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@${GITHUB_HOSTNAME}/${REPOSITORY}.git"
           remote_branch=$PAGES_BRANCH
           
           
@@ -43,4 +42,7 @@ jobs:
           git add .
 
           git commit -m "deploy"
+          
+          echo "Pushing to ${remote_repo} master:${remote_branch}"
+          
           git push --force "${remote_repo}" master:"${remote_branch}"
