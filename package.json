@@ -8,7 +8,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "@connorskees/grass": "0.10.1"
+    "@connorskees/grass": "0.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.4",
