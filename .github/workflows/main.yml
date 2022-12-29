@@ -17,7 +17,7 @@ jobs:
           OUT_DIR: "public"
           # Or if publishing to the same repo, use the automatic token
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPOSITORY: "grassmeister"
+          REPOSITORY: ${{ github.event.repository.name }}
           GITHUB_HOSTNAME: "github.com"
         run: |
           set -e
@@ -29,7 +29,7 @@ jobs:
           echo "actor: ${GITHUB_ACTOR}"
           echo "hostname ${GITHUB_HOSTNAME}"
 
-          remote_repo="https://${GITHUB_ACTOR}:${TOKEN}@${GITHUB_HOSTNAME}/${REPOSITORY}.git"
+          remote_repo="https://${GITHUB_ACTOR}:${TOKEN}@github.com/${GITHUB_ACTOR}/${REPOSITORY}.git"
           remote_branch=$PAGES_BRANCH
           
           echo "installing"
