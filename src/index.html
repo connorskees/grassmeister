@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 	<meta charset="utf-8">
@@ -36,11 +36,23 @@
 			width: 50%;
 			height: 100vh;
 		}
+
+		.share {
+			position: absolute;
+			right: 10px;
+			bottom: 10px;
+			z-index: 100;
+			border: none;
+			border-radius: 4px;
+			padding: 5px 8px;
+			cursor: pointer;
+			/* todo: we don't support this for now */
+			display: none;
+		}
 	</style>
 </head>
 
 <body>
-
 	<script src="https://unpkg.com/monaco-editor@latest/min/vs/loader.js"></script>
 
 	<div class="outer">
@@ -52,8 +64,25 @@
 		</div>
 	</div>
 
+	<button class="share" type="button" onclick="">
+		Share
+	</button>
 
 	<script>
+		const params = new URLSearchParams(window.location.search);
+		const encoded = params.get("v");
+
+		let startingText;
+
+		try {
+			const decoded = atob(encoded);
+			if (encoded && decoded) {
+				startingText = decoded;
+			}
+		} catch (e) {
+			startingText = undefined;
+		}
+
 		require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' } });
 		window.MonacoEnvironment = { getWorkerUrl: () => proxy };
 
@@ -66,7 +95,7 @@
 
 		require(["vs/editor/editor.main"], function () {
 			const input = monaco.editor.create(document.getElementById('editor'), {
-				value: [
+				value: startingText ?? [
 					'a {',
 					'    b {',
 					'        color: &;',
@@ -77,7 +106,7 @@
 				theme: 'vs-dark',
 			});
 			const output = monaco.editor.create(document.getElementById('output'), {
-				value: [
+				value: startingText ? undefined : [
 					'a b {',
 					'    color: a b;',
 					'}'
@@ -92,6 +121,8 @@
 			input.getModel().onDidChangeContent((event) => {
 				window.compile(input, output);
 			});
+
+			window.compile?.(input, output);
 		});
 	</script>
 </body>
