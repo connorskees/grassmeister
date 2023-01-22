@@ -1,0 +1,98 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>grass repl</title><style>html,
+		body {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+
+		#editor,
+		#output {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+
+		.outer {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+		}
+
+		.container {
+			width: 50%;
+			height: 100vh;
+		}
+
+		.share {
+			position: absolute;
+			right: 10px;
+			bottom: 10px;
+			z-index: 100;
+			border: none;
+			border-radius: 4px;
+			padding: 5px 8px;
+			cursor: pointer;
+			/* todo: we don't support this for now */
+			display: none;
+		}</style></head><body><script src="https://unpkg.com/monaco-editor@latest/min/vs/loader.js"></script><div class="outer"><div class="container"><div id="editor"></div></div><div class="container"><div id="output"></div></div></div><button class="share" type="button" onclick="">Share</button><script>const params = new URLSearchParams(window.location.search);
+		const encoded = params.get("v");
+
+		let startingText;
+
+		try {
+			const decoded = atob(encoded);
+			if (encoded && decoded) {
+				startingText = decoded;
+			}
+		} catch (e) {
+			startingText = undefined;
+		}
+
+		require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' } });
+		window.MonacoEnvironment = { getWorkerUrl: () => proxy };
+
+		let proxy = URL.createObjectURL(new Blob([`
+			self.MonacoEnvironment = {
+				baseUrl: 'https://unpkg.com/monaco-editor@latest/min/'
+			};
+			importScripts('https://unpkg.com/monaco-editor@latest/min/vs/base/worker/workerMain.js');
+		`], { type: 'text/javascript' }));
+
+		require(["vs/editor/editor.main"], function () {
+			const input = monaco.editor.create(document.getElementById('editor'), {
+				value: startingText ?? [
+					'a {',
+					'    b {',
+					'        color: &;',
+					'    }',
+					'}',
+				].join('\n'),
+				language: 'scss',
+				theme: 'vs-dark',
+			});
+			const output = monaco.editor.create(document.getElementById('output'), {
+				value: startingText ? undefined : [
+					'a b {',
+					'    color: a b;',
+					'}'
+				].join('\n'),
+				language: 'css',
+				theme: 'vs-dark',
+				readOnly: true,
+			});
+
+			input.getModel().updateOptions({ insertSpaces: true });
+
+			input.getModel().onDidChangeContent((event) => {
+				window.compile(input, output);
+			});
+
+			window.compile?.(input, output);
+		});</script><script src="grassmeister.bundle.js"></script></body></html>
